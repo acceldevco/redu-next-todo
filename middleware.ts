@@ -14,6 +14,8 @@ export async function middleware(request: NextRequest) {
   const csrfToken = request.cookies.get(CSRF_HEADER)?.value;
   const { pathname } = request.nextUrl;
 
+  console.log(request);
+  
   let userId: string | null = null;
 
   // مسیرهایی که نیاز به توکن ندارند
@@ -48,6 +50,7 @@ export async function middleware(request: NextRequest) {
       return response;
     }
   }
+console.log(pathname.startsWith("/auth"));
 
   // اگر توکن دارد و به صفحه‌ی auth می‌رود → بفرستش صفحه اصلی
   if (token && pathname.startsWith("/auth")) {
@@ -59,5 +62,5 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   runtime: "nodejs",
-  matcher: ["/user/:path*", "/api/:path*","/:path*"],
+  matcher: ["/user/:path*", "/api/:path*", "/auth/:path*"],
 };
