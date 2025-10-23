@@ -4,14 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && npm run pris",
+    "vercel-build": "prisma generate && prisma migrate deploy && next build",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest",
     "test:watch": "vitest --watch",
     "cy": "cypress open",
     "anal": "next analyze",
-    "pris":"prisma generate",
+    "pris": "prisma generate",
     "tw": "npx @tailwindcss/cli -i ./app/globals.css -o ./app/output.css --watch --minify"
   },
   "dependencies": {
