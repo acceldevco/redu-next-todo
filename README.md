@@ -96,12 +96,6 @@ DIRECT_URL=""
 | `DATABASE_URL` | اتصال Pooling به Supabase |
 | `DIRECT_URL` | اتصال مستقیم برای Migrations |
 
-### ⚠️ نکات امنیتی
-
-- **هرگز** فایل `.env.local` را commit نکنید
-- از **GitHub Secrets** یا **Vercel Environment Variables** استفاده کنید
-- برای ایمیل‌ها از **App Password** استفاده کنید
-
 ---
 
 <h1 align="right">## 🚀 reduNextTodo — جایی که هر تسک، به جریان تبدیل می‌شود</h1>
