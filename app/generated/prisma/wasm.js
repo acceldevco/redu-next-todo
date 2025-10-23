@@ -244,7 +244,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/workspaces/redu-next-todo/app/generated/prisma",
+      "value": "F:\\nextjs\\redu-next-todo\\app\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -253,16 +253,17 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "debian-openssl-1.1.x",
+        "value": "windows",
         "native": true
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/workspaces/redu-next-todo/prisma/schema.prisma",
+    "sourceFilePath": "F:\\nextjs\\redu-next-todo\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null
+    "rootEnvPath": null,
+    "schemaEnvPath": "../../../.env"
   },
   "relativePath": "../../../prisma",
   "clientVersion": "6.17.1",
@@ -271,17 +272,16 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": true,
   "inlineDatasources": {
     "db": {
       "url": {
-        "fromEnvVar": "DATABASE_URL",
+        "fromEnvVar": "DATABASE_URLPG",
         "value": null
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../app/generated/prisma\"\n}\n\ndatasource db {\n  provider  = \"postgresql\"\n  url       = env(\"DATABASE_URL\")\n  directUrl = env(\"DIRECT_URL\")\n  //  url      = env(\"DATABASE_URLPG\")\n  // url       = env(\"DATABASE_URL\")\n  // directUrl = env(\"DIRECT_URL\")\n}\n\nenum Visibility {\n  PUBLIC\n  PRIVATE\n}\n\nenum Priority {\n  LOW\n  MEDIUM\n  HIGH\n}\n\nenum TaskStatus {\n  TODO\n  IN_PROGRESS\n  DONE\n}\n\nenum ActivityAction {\n  CREATED\n  MOVED\n  UPDATED\n  DELETED\n  COMMENTED\n}\n\nmodel User {\n  id        String   @id @default(uuid())\n  email     String   @unique\n  name      String?\n  avatar    String?\n  verified  Boolean  @default(false)\n  createdAt DateTime @default(now())\n\n  tokens        VerificationToken[]\n  groupsCreated Group[]             @relation(\"GroupCreator\")\n  memberships   Member[]\n  // assignedTasks Task[]              @relation(\"AssignedTo\")\n  comments      Comment[]\n  activities    Activity[]          @relation(\"ActivityBy\")\n}\n\nmodel VerificationToken {\n  id        String   @id @default(uuid())\n  token     String   @unique\n  userId    String\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n  createdAt DateTime @default(now())\n}\n\nmodel Group {\n  id          String     @id @default(uuid())\n  name        String\n  description String?\n  createdAt   DateTime   @default(now())\n  createdById String\n  created_by  User       @relation(\"GroupCreator\", fields: [createdById], references: [id], onDelete: Cascade)\n  // memberCount Int\n  visibility  Visibility @default(PRIVATE)\n  coverImage  String?\n\n  members Member[]\n  columns Column[]\n\n  @@index([createdAt])\n}\n\nmodel Column {\n  id        String  @id @default(uuid())\n  name      String\n  order     Int\n  groupId   String\n  colortask String?\n  group     Group   @relation(fields: [groupId], references: [id], onDelete: Cascade)\n  tasks     Task[]\n\n  @@index([groupId, order])\n}\n\nmodel Member {\n  id        String @id @default(uuid())\n  userEmail String\n  groupId   String\n  role      String @default(\"member\")\n\n  user  User  @relation(fields: [userEmail], references: [email], onDelete: Cascade)\n  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)\n\n  // هر عضو می‌تونه در چند تسک مشارکت کنه\n  assignedTasks TaskAssignment[]\n\n  @@unique([userEmail, groupId])\n}\n\nmodel Task {\n  id          String     @id @default(uuid())\n  title       String\n  description String?\n  columnId    String\n  column      Column     @relation(fields: [columnId], references: [id], onDelete: Cascade)\n  dueDate     DateTime?\n  priority    Priority   @default(MEDIUM)\n  createdAt   DateTime   @default(now())\n  updatedAt   DateTime   @updatedAt\n  order       Int        @default(0)\n  status      TaskStatus @default(TODO)\n\n  // تسک می‌تونه چند ممبر داشته باشه\n  assignedMembers TaskAssignment[]\n\n  taskLabels TaskLabel[]\n  comments   Comment[]\n  activity   Activity[]\n\n  @@index([columnId])\n  @@index([dueDate])\n}\n\nmodel TaskAssignment {\n  id       String @id @default(uuid())\n  taskId   String\n  memberId String\n\n  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)\n  member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)\n\n  // @@unique([taskId, memberId]) // جلوگیری از تکرار\n}\n\nmodel Label {\n  id    String      @id @default(uuid())\n  name  String      @unique\n  tasks TaskLabel[]\n}\n\nmodel TaskLabel {\n  id      String @id @default(uuid())\n  taskId  String\n  labelId String\n\n  task  Task  @relation(fields: [taskId], references: [id], onDelete: Cascade)\n  label Label @relation(fields: [labelId], references: [id], onDelete: Cascade)\n\n  @@unique([taskId, labelId])\n  @@index([labelId])\n}\n\nmodel Comment {\n  id        String   @id @default(uuid())\n  authorId  String\n  taskId    String\n  text      String\n  createdAt DateTime @default(now())\n\n  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)\n  task   Task @relation(fields: [taskId], references: [id], onDelete: Cascade)\n\n  @@index([taskId])\n}\n\nmodel Activity {\n  id         String         @id @default(uuid())\n  action     ActivityAction\n  byId       String\n  taskId     String?\n  fromColumn String?\n  toColumn   String?\n  timestamp  DateTime       @default(now())\n\n  by   User  @relation(\"ActivityBy\", fields: [byId], references: [id], onDelete: Cascade)\n  task Task? @relation(fields: [taskId], references: [id], onDelete: Cascade)\n\n  @@index([byId])\n  @@index([taskId])\n}\n",
-  "inlineSchemaHash": "8689f2b7490f45fe7bc7215404084fffa5c939822ff9d7eabd73d0dd3b8e3638",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../app/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  // url       = env(\"DATABASE_URL\")\n  // directUrl = env(\"DIRECT_URL\")\n  url      = env(\"DATABASE_URLPG\")\n  // url       = env(\"DATABASE_URL\")\n  // directUrl = env(\"DIRECT_URL\")\n}\n\nenum Visibility {\n  PUBLIC\n  PRIVATE\n}\n\nenum Priority {\n  LOW\n  MEDIUM\n  HIGH\n}\n\nenum TaskStatus {\n  TODO\n  IN_PROGRESS\n  DONE\n}\n\nenum ActivityAction {\n  CREATED\n  MOVED\n  UPDATED\n  DELETED\n  COMMENTED\n}\n\nmodel User {\n  id        String   @id @default(uuid())\n  email     String   @unique\n  name      String?\n  avatar    String?\n  verified  Boolean  @default(false)\n  createdAt DateTime @default(now())\n\n  tokens        VerificationToken[]\n  groupsCreated Group[]             @relation(\"GroupCreator\")\n  memberships   Member[]\n  // assignedTasks Task[]              @relation(\"AssignedTo\")\n  comments      Comment[]\n  activities    Activity[]          @relation(\"ActivityBy\")\n}\n\nmodel VerificationToken {\n  id        String   @id @default(uuid())\n  token     String   @unique\n  userId    String\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n  createdAt DateTime @default(now())\n}\n\nmodel Group {\n  id          String     @id @default(uuid())\n  name        String\n  description String?\n  createdAt   DateTime   @default(now())\n  createdById String\n  created_by  User       @relation(\"GroupCreator\", fields: [createdById], references: [id], onDelete: Cascade)\n  // memberCount Int\n  visibility  Visibility @default(PRIVATE)\n  coverImage  String?\n\n  members Member[]\n  columns Column[]\n\n  @@index([createdAt])\n}\n\nmodel Column {\n  id        String  @id @default(uuid())\n  name      String\n  order     Int\n  groupId   String\n  colortask String?\n  group     Group   @relation(fields: [groupId], references: [id], onDelete: Cascade)\n  tasks     Task[]\n\n  @@index([groupId, order])\n}\n\nmodel Member {\n  id        String @id @default(uuid())\n  userEmail String\n  groupId   String\n  role      String @default(\"member\")\n\n  user  User  @relation(fields: [userEmail], references: [email], onDelete: Cascade)\n  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)\n\n  // هر عضو می‌تونه در چند تسک مشارکت کنه\n  assignedTasks TaskAssignment[]\n\n  @@unique([userEmail, groupId])\n}\n\nmodel Task {\n  id          String     @id @default(uuid())\n  title       String\n  description String?\n  columnId    String\n  column      Column     @relation(fields: [columnId], references: [id], onDelete: Cascade)\n  dueDate     DateTime?\n  priority    Priority   @default(MEDIUM)\n  createdAt   DateTime   @default(now())\n  updatedAt   DateTime   @updatedAt\n  order       Int        @default(0)\n  status      TaskStatus @default(TODO)\n\n  // تسک می‌تونه چند ممبر داشته باشه\n  assignedMembers TaskAssignment[]\n\n  taskLabels TaskLabel[]\n  comments   Comment[]\n  activity   Activity[]\n\n  @@index([columnId])\n  @@index([dueDate])\n}\n\nmodel TaskAssignment {\n  id       String @id @default(uuid())\n  taskId   String\n  memberId String\n\n  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)\n  member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)\n\n  // @@unique([taskId, memberId]) // جلوگیری از تکرار\n}\n\nmodel Label {\n  id    String      @id @default(uuid())\n  name  String      @unique\n  tasks TaskLabel[]\n}\n\nmodel TaskLabel {\n  id      String @id @default(uuid())\n  taskId  String\n  labelId String\n\n  task  Task  @relation(fields: [taskId], references: [id], onDelete: Cascade)\n  label Label @relation(fields: [labelId], references: [id], onDelete: Cascade)\n\n  @@unique([taskId, labelId])\n  @@index([labelId])\n}\n\nmodel Comment {\n  id        String   @id @default(uuid())\n  authorId  String\n  taskId    String\n  text      String\n  createdAt DateTime @default(now())\n\n  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)\n  task   Task @relation(fields: [taskId], references: [id], onDelete: Cascade)\n\n  @@index([taskId])\n}\n\nmodel Activity {\n  id         String         @id @default(uuid())\n  action     ActivityAction\n  byId       String\n  taskId     String?\n  fromColumn String?\n  toColumn   String?\n  timestamp  DateTime       @default(now())\n\n  by   User  @relation(\"ActivityBy\", fields: [byId], references: [id], onDelete: Cascade)\n  task Task? @relation(fields: [taskId], references: [id], onDelete: Cascade)\n\n  @@index([byId])\n  @@index([taskId])\n}\n",
+  "inlineSchemaHash": "09c5898208fed2a773fe002c54194847e7c73417da1a0ffc121a55e3d6816f9b",
   "copyEngine": true
 }
 config.dirname = '/'
@@ -300,7 +300,7 @@ config.compilerWasm = undefined
 
 config.injectableEdgeEnv = () => ({
   parsed: {
-    DATABASE_URL: typeof globalThis !== 'undefined' && globalThis['DATABASE_URL'] || typeof process !== 'undefined' && process.env && process.env.DATABASE_URL || undefined
+    DATABASE_URLPG: typeof globalThis !== 'undefined' && globalThis['DATABASE_URLPG'] || typeof process !== 'undefined' && process.env && process.env.DATABASE_URLPG || undefined
   }
 })
 

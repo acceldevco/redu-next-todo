@@ -372,7 +372,7 @@ export default function LandingPage() {
         <video 
           id="mainVideo"
           className="w-full h-full object-cover"
-          src="YOUR_VIDEO_URL.mp4"
+          src="./Help.mp4"
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
         />

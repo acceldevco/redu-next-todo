@@ -49,7 +49,7 @@ export function useLoadingData<T = any>(
       const cursor = pageParam?.nextCursor ?? null;
 
       const res = await fetch(
-        `/api/${type}${body?`/${body}`:""}?limit=${limit}${
+        `/api/${type}${body?`/${typeof body !=='object'? body:''}`:""}?limit=${limit}${
           cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""
         }${debouncedSearch ? `&search=${debouncedSearch}` : ""}`,
         {

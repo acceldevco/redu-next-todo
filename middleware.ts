@@ -42,6 +42,7 @@ export async function middleware(request: NextRequest) {
       const payload = jwt.verify(token, JWT_SECRET) as { sub: string };
       userId = payload.sub;
     } catch {
+      
       const response = NextResponse.redirect(new URL("/auth", request.url));
       response.cookies.delete("token");
       return response;
@@ -58,5 +59,5 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   runtime: "nodejs",
-  matcher: ["/user/:path*", "/api/:path*"],
+  matcher: ["/user/:path*", "/api/:path*","/:path*"],
 };
