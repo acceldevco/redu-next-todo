@@ -22,7 +22,7 @@ export default function LoginPage() {
       .then(() => {
         setIsLoading(true);
         setIsLoading(false);
-        alert("لینک دعوت به این ایمیل ارسال شد.");
+        alert("لینک دعوت به این ایمیل ارسال شد");
       })
       .catch(() => {
         alert("error");
