@@ -244,7 +244,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "F:\\nextjs\\redu-next-todo\\app\\generated\\prisma",
+      "value": "/workspaces/redu-next-todo/app/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -253,17 +253,16 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "windows",
+        "value": "debian-openssl-1.1.x",
         "native": true
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "F:\\nextjs\\redu-next-todo\\prisma\\schema.prisma",
+    "sourceFilePath": "/workspaces/redu-next-todo/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null,
-    "schemaEnvPath": "../../../.env"
+    "rootEnvPath": null
   },
   "relativePath": "../../../prisma",
   "clientVersion": "6.17.1",
@@ -272,6 +271,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": true,
   "inlineDatasources": {
     "db": {
       "url": {
