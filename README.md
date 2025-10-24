@@ -1,8 +1,6 @@
 
-<video width="600" controls>
-  <source src="https://github.com/acceldevco/redu-next-todo/blob/master/public/Help.mp4" type="video/mp4">
-  مرورگر شما از ویدیو پشتیبانی نمی‌کند.
-</video>
+🎬 [مشاهده ویدیو](https://github.com/acceldevco/redu-next-todo/blob/master/public/Help.mp4)
+
 
 <h1 align="right">🧩 reduNextTodo — مدیریت پروژه، ساده‌تر از همیشه</h1>
 
